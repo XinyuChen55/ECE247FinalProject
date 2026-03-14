@@ -1,24 +1,20 @@
-from pathlib import Path
 from typing import Any, Sequence, ClassVar
 
-import numpy as np
 import pytorch_lightning as pl
 import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 from torch import nn
-from torch.utils.data import ConcatDataset, DataLoader
 from torchmetrics import MetricCollection
 
 from emg2qwerty import utils
 from emg2qwerty.charset import charset
-from emg2qwerty.data import LabelData, WindowedEMGDataset
+from emg2qwerty.data import LabelData
 from emg2qwerty.metrics import CharacterErrorRates
 from emg2qwerty.modules import (
     MultiBandRotationInvariantMLP,
     SpectrogramNorm,
 )
-from emg2qwerty.transforms import Transform
 
 class GRUEncoder(nn.Module):
     """
