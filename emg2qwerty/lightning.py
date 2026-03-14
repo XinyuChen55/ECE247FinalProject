@@ -106,8 +106,8 @@ class WindowedEMGDataModule(pl.LightningDataModule):
             shuffle=True,
             num_workers=self.num_workers,
             collate_fn=WindowedEMGDataset.collate,
-            pin_memory=True,
-            persistent_workers=True,
+            pin_memory=False,
+            persistent_workers=False,
         )
 
     def val_dataloader(self) -> DataLoader:
@@ -117,8 +117,8 @@ class WindowedEMGDataModule(pl.LightningDataModule):
             shuffle=False,
             num_workers=self.num_workers,
             collate_fn=WindowedEMGDataset.collate,
-            pin_memory=True,
-            persistent_workers=True,
+            pin_memory=False,
+            persistent_workers=False,
         )
 
     def test_dataloader(self) -> DataLoader:
@@ -132,8 +132,8 @@ class WindowedEMGDataModule(pl.LightningDataModule):
             shuffle=False,
             num_workers=self.num_workers,
             collate_fn=WindowedEMGDataset.collate,
-            pin_memory=True,
-            persistent_workers=True,
+            pin_memory=False,
+            persistent_workers=False,
         )
 
 
