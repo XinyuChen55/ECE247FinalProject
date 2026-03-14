@@ -1,4 +1,4 @@
-from typing import Any, Sequence, ClassVar
+from typing import Any, ClassVar, Sequence
 
 import pytorch_lightning as pl
 import torch
@@ -11,10 +11,8 @@ from emg2qwerty import utils
 from emg2qwerty.charset import charset
 from emg2qwerty.data import LabelData
 from emg2qwerty.metrics import CharacterErrorRates
-from emg2qwerty.modules import (
-    MultiBandRotationInvariantMLP,
-    SpectrogramNorm,
-)
+from emg2qwerty.modules import MultiBandRotationInvariantMLP, SpectrogramNorm
+
 
 class GRUEncoder(nn.Module):
     """
@@ -42,7 +40,7 @@ class GRUEncoder(nn.Module):
             num_layers=num_layers,
             dropout=dropout if num_layers > 1 else 0.0,
             bidirectional=bidirectional,
-            batch_first=False, 
+            batch_first=False,
         )
         self.layer_norm = nn.LayerNorm(self.output_size)
 
@@ -80,17 +78,14 @@ class GRUCTCModule(pl.LightningModule):
         self.model = nn.Sequential(
             # inputs: (T, N, bands=2, electrode_channels=16, freq)
             SpectrogramNorm(channels=self.NUM_BANDS * self.ELECTRODE_CHANNELS),
-
             # (T, N, bands=2, mlp_features[-1])
             MultiBandRotationInvariantMLP(
                 in_features=in_features,
                 mlp_features=mlp_features,
                 num_bands=self.NUM_BANDS,
             ),
-
             # (T, N, 2 * mlp_features[-1])
             nn.Flatten(start_dim=2),
-
             # (T, N, gru_out_features)
             GRUEncoder(
                 input_size=mlp_out_features,
@@ -99,10 +94,8 @@ class GRUCTCModule(pl.LightningModule):
                 dropout=gru_dropout,
                 bidirectional=gru_bidirectional,
             ),
-
             # -> (T, N, num_classes)
             nn.Linear(gru_out_features, charset().num_classes),
-
             # log probs for CTC
             nn.LogSoftmax(dim=-1),
         )
@@ -140,10 +133,10 @@ class GRUCTCModule(pl.LightningModule):
         emission_lengths = input_lengths - T_diff
 
         loss = self.ctc_loss(
-            log_probs=emissions,                  # (T, N, C)
-            targets=targets.transpose(0, 1),     # (T, N) -> (N, T)
-            input_lengths=emission_lengths,      # (N,)
-            target_lengths=target_lengths,       # (N,)
+            log_probs=emissions,  # (T, N, C)
+            targets=targets.transpose(0, 1),  # (T, N) -> (N, T)
+            input_lengths=emission_lengths,  # (N,)
+            target_lengths=target_lengths,  # (N,)
         )
 
         predictions = self.decoder.decode_batch(

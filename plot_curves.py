@@ -1,6 +1,7 @@
 from pathlib import Path
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import pandas as pd
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
 
@@ -36,7 +37,10 @@ def extract_scalar_from_events(event_files, tag):
 
 
 def main():
-    log_dir = Path("/home/xinyu001/emg2qwerty/logs/2026-03-12/best-40epoch/lightning_logs/version_0")
+    log_dir = Path(
+        "/home/xinyu001/emg2qwerty/logs/2026-03-12"
+        "/best-40epoch/lightning_logs/version_0"
+    )
     out_dir = Path("/home/xinyu001/emg2qwerty/plots")
     out_dir.mkdir(exist_ok=True)
 
@@ -70,8 +74,8 @@ def main():
         if not df.empty:
             df["epoch"] = df["step"] / steps_per_epoch
 
-    #Loss curve
-    #start from epoch 1
+    # Loss curve
+    # start from epoch 1
     train_loss_plot = train_loss_df[train_loss_df["epoch"] >= 1]
     val_loss_plot = val_loss_df[val_loss_df["epoch"] >= 1]
 
@@ -100,7 +104,7 @@ def main():
     plt.savefig(loss_path, dpi=300, bbox_inches="tight")
     plt.close()
 
-    #CER curve
+    # CER curve
     plt.figure(figsize=(8, 5))
     if not train_cer_df.empty:
         plt.plot(train_cer_df["epoch"], train_cer_df["value"], label="train CER")
